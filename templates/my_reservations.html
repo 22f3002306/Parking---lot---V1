@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Reservations</h2>
+<table class="table table-bordered">
+  <thead><tr><th>Lot</th><th>Spot</th><th>Start</th><th>End</th><th>Cost/unit</th><th>Action</th></tr></thead>
+  <tbody>
+    {% for r in reservations %}
+    <tr>
+      <td>{{ r.spot.lot.prime_location_name }}</td>
+      <td>{{ r.spot.id }}</td>
+      <td>{{ r.parking_timestamp or '' }}</td>
+      <td>{{ r.leaving_timestamp or '' }}</td>
+      <td>{{ r.parking_cost_per_unit_time }}</td>
+      <td>
+        {% if not r.leaving_timestamp %}
+        <form method="post" style="display:inline">
+          <input type="hidden" name="res_id" value="{{ r.id }}">
+          <input type="hidden" name="action" value="release">
+          <button type="submit" class="btn btn-sm btn-danger">Release</button>
+        </form>
+        {% else %}
+        <span class="text-success">Released</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 

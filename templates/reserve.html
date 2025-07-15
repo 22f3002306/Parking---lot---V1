@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Reserve Spot</h2>
+<p><strong>Lot:</strong> {{ lot.prime_location_name }}</p>
+<p><strong>Spot ID:</strong> {{ spot.id }}</p>
+<p><strong>Price per unit time:</strong> {{ lot.price }}</p>
+<form method="post">
+  <button type="submit" class="btn btn-success">Confirm Reservation</button>
+</form>
+{% endblock %} 
