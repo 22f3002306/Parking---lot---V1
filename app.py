@@ -3,6 +3,9 @@ from models import db, User, ParkingLot, ParkingSpot, Reservation
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
@@ -71,8 +74,30 @@ def user_dashboard():
     if session.get('role') != 'user':
         return redirect(url_for('login'))
     lots = ParkingLot.query.all()
-    return render_template('user_dashboard.html', lots=lots)
-
+    # Get reservations for the current user
+    user_id = session['user_id']
+    reservations = Reservation.query.filter_by(user_id=user_id).all()
+    # Count reservations per lot
+    lot_counts = {}
+    for r in reservations:
+        lot_name = r.spot.lot.prime_location_name
+        lot_counts[lot_name] = lot_counts.get(lot_name, 0) + 1
+    # Prepare chart if there is data
+    chart_url = None
+    if lot_counts:
+        fig, ax = plt.subplots()
+        ax.bar(lot_counts.keys(), lot_counts.values())
+        ax.set_xlabel('Parking Lot')
+        ax.set_ylabel('Number of Reservations')
+        ax.set_title('Number of Lots Used by You')
+        plt.xticks(rotation=45, ha='right')
+        buf = io.BytesIO()
+        plt.tight_layout()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        chart_url = base64.b64encode(buf.getvalue()).decode('utf8')
+        plt.close(fig)
+    return render_template('user_dashboard.html', lots=lots, chart_url=chart_url)
 @app.route('/admin/create_lot', methods=['GET', 'POST'])
 def create_lot():
     if session.get('role') != 'admin':

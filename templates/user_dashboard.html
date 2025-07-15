@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>User Dashboard</h2>
+{% if chart_url %}
+<div class="mb-4">
+  <h5>Summary of Lots Used</h5>
+  <img src="data:image/png;base64,{{ chart_url }}" class="img-fluid" alt="Lots Used Chart"/>
+</div>
+{% endif %}
 <table class="table table-bordered">
   <thead><tr><th>Name</th><th>Price</th><th>Address</th><th>Pin</th><th>Available Spots</th><th>Reserve</th></tr></thead>
   <tbody>
