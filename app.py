@@ -74,16 +74,13 @@ def user_dashboard():
     if session.get('role') != 'user':
         return redirect(url_for('login'))
     lots = ParkingLot.query.all()
-    # Get reservations for the current user
     user_id = session['user_id']
     reservations = Reservation.query.filter_by(user_id=user_id).all()
-    # Count reservations per lot
     lot_counts = {}
     for r in reservations:
         lot_name = r.spot.lot.prime_location_name
         lot_counts[lot_name] = lot_counts.get(lot_name, 0) + 1
-    # Prepare chart if there is data
-    chart_url = None
+        chart_url = None
     if lot_counts:
         fig, ax = plt.subplots()
         ax.bar(lot_counts.keys(), lot_counts.values())
