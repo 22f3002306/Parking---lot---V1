@@ -80,7 +80,7 @@ def user_dashboard():
     for r in reservations:
         lot_name = r.spot.lot.prime_location_name
         lot_counts[lot_name] = lot_counts.get(lot_name, 0) + 1
-        chart_url = None
+    chart_url = None
     if lot_counts:
         fig, ax = plt.subplots()
         ax.bar(lot_counts.keys(), lot_counts.values())
@@ -95,6 +95,7 @@ def user_dashboard():
         chart_url = base64.b64encode(buf.getvalue()).decode('utf8')
         plt.close(fig)
     return render_template('user_dashboard.html', lots=lots, chart_url=chart_url)
+
 @app.route('/admin/create_lot', methods=['GET', 'POST'])
 def create_lot():
     if session.get('role') != 'admin':
