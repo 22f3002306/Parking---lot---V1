@@ -139,6 +139,9 @@ def delete_lot(lot_id):
         flash('Cannot delete lot: some spots are occupied.')
         return redirect(url_for('admin_dashboard'))
     for spot in lot.spots:
+        reservations = Reservation.query.filter_by(spot_id=spot.id).all()
+        for reservation in reservations:
+            db.session.delete(reservation)
         db.session.delete(spot)
     db.session.delete(lot)
     db.session.commit()
